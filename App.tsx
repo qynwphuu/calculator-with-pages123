@@ -1,6 +1,8 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   StyleSheet,
   Text,
@@ -11,15 +13,18 @@ import {
   FlatList,
   DevSettings,
 } from "react-native";
+import History from "./History";
+
+const Tab = createBottomTabNavigator();
 
 type dataList = {
   first: number;
-    second: number;
-    result: number;
-    operation: string;
+  second: number;
+  result: number;
+  operation: string;
 };
 
-export default function App() {
+function CalculatorScreen() {
   const [result, setResult] = useState(0);
   const [first, setFirst] = useState("");
   const [second, setSecond] = useState("");
@@ -36,7 +41,7 @@ export default function App() {
         first: Number(first),
         second: Number(second),
         result: answer,
-        operation: "-"
+        operation: "-",
       },
     ]);
     setFirst("");
@@ -54,7 +59,7 @@ export default function App() {
         first: Number(first),
         second: Number(second),
         result: answer,
-        operation: "+"
+        operation: "+",
       },
     ]);
     setFirst("");
@@ -86,19 +91,19 @@ export default function App() {
           <Button onPress={Subtraction} title=" - " />
         </View>
 
-        <Text style={styles.text}>History:</Text>
-        <FlatList
-          data={calculation}
-          renderItem={({ item }) => (
-            <View>
-              <Text>
-                {item.first} {item.operation} {item.second} = {item.result}
-              </Text>
-            </View>
-          )}
-        />
       </SafeAreaView>
     </SafeAreaProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Home" component={CalculatorScreen} />
+        <Tab.Screen name="History" component={History} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -119,9 +124,10 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
+    paddingTop: 10,
     flexDirection: "row",
     justifyContent: "space-between",
-    width: 120,
+    width: 80,
   },
 
   description: {
@@ -139,5 +145,5 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 4,
     marginBottom: 5,
-  }
+  },
 });
