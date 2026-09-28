@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    marginTop: 5,
+    marginTop: 4,
     marginBottom: 5,
   }
 });
