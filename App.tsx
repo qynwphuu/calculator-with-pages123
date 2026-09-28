@@ -10,6 +10,7 @@ import {
   Button,
   TextInput,
 } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import History from "./History";
 
 const Tab = createBottomTabNavigator();
@@ -100,11 +101,32 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        <Tab.Screen name="Home" component={CalculatorScreen} />
+        <Tab.Screen
+          name="Home"
+          component={CalculatorScreen}
+          options={{
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons
+                name={focused ? "home" : "home-outline"}
+                color={color}
+                size={size}
+              />
+            ),
+          }}
+        />
         <Tab.Screen
           name="History"
           component={History}
           initialParams={{ historyData: [] }}
+          options={{
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons
+                name={focused ? "time" : "time-outline"}
+                color={color}
+                size={size}
+              />
+            ),
+          }}
         />
       </Tab.Navigator>
     </NavigationContainer>
