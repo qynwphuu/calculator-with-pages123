@@ -8,10 +8,7 @@ import {
   Text,
   View,
   Button,
-  Alert,
   TextInput,
-  FlatList,
-  DevSettings,
 } from "react-native";
 import History from "./History";
 
@@ -24,46 +21,50 @@ type dataList = {
   operation: string;
 };
 
-function CalculatorScreen() {
+type CalculatorScreenProps = {
+  navigation: {
+    navigate: (screen: "History", params: { historyData: dataList[] }) => void;
+  };
+};
+
+function CalculatorScreen({ navigation }: CalculatorScreenProps) {
   const [result, setResult] = useState(0);
   const [first, setFirst] = useState("");
   const [second, setSecond] = useState("");
   const [calculation, setCalculation] = useState<dataList[]>([]);
 
-  const Subtraction = () => {
-    const answer = Number(first) - Number(second);
+  const calculate = (operation: "-" | "+") => {
+    const firstNumber = Number(first);
+    const secondNumber = Number(second);
 
-    setResult(answer);
+    if (!first.trim() || !second.trim() || !Number.isFinite(firstNumber) || !Number.isFinite(secondNumber)) {
+      return;
+    }
 
-    setCalculation([
+    const answer = operation === "+" ? firstNumber + secondNumber : firstNumber - secondNumber;
+    const newCalc = [
       ...calculation,
       {
-        first: Number(first),
-        second: Number(second),
+        first: firstNumber,
+        second: secondNumber,
         result: answer,
-        operation: "-",
+        operation,
       },
-    ]);
+    ];
+
+    setResult(answer);
+    setCalculation(newCalc);
+    navigation.navigate("History", { historyData: newCalc });
     setFirst("");
     setSecond("");
   };
 
+  const Subtraction = () => {
+    calculate("-");
+  };
+
   const Addition = () => {
-    const answer = Number(first) + Number(second);
-
-    setResult(answer);
-
-    setCalculation([
-      ...calculation,
-      {
-        first: Number(first),
-        second: Number(second),
-        result: answer,
-        operation: "+",
-      },
-    ]);
-    setFirst("");
-    setSecond("");
+    calculate("+");
   };
 
   return (
@@ -90,7 +91,6 @@ function CalculatorScreen() {
           <Button onPress={Addition} title=" + " />
           <Button onPress={Subtraction} title=" - " />
         </View>
-
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -101,7 +101,11 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen name="Home" component={CalculatorScreen} />
-        <Tab.Screen name="History" component={History} />
+        <Tab.Screen
+          name="History"
+          component={History}
+          initialParams={{ historyData: [] }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
@@ -121,6 +125,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
     padding: 10,
     width: 200,
+    marginBottom: 10,
   },
 
   buttonContainer: {
